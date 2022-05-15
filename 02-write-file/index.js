@@ -2,17 +2,23 @@ const fs = require('fs');
 const path = require('path');
 const process = require('process');
 const { stdin, stdout } = process;
+const readline = require('readline');
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 
 const textOut = 'Hello Student1, type here something...\n';
-stdout.write(`${textOut}`),
+const newFile = 'mynotes.txt'
 fs.writeFile(
-    path.join(__dirname, 'mynotes.txt'),
+    path.join(__dirname, newFile),
     textOut,
     (err) => {
         if (err) throw err;
-    }
-),
+        stdout.write(textOut);
+        }
+);
 stdin.on('data', data => {
     const textIn = data.toString();
     fs.appendFile(
@@ -20,24 +26,27 @@ stdin.on('data', data => {
         textIn,
         err => {
             if (err) throw err;
-            // process.exit(1)
         }
         );
-        //     if (textIn === 'exit') {
-            //         console.log('48');
-            // }
 });
-
-process.on('exit', code => {
-    if (code) {
-        const textBye = 'Bye bye!\n';
-        fs.appendFile(
-            path.join(__dirname, 'mynotes.txt'),
-            textBye,
-            err => {
-                if (err) throw err;
-            }
-            );
-            stdout.write(`${textBye}`);
+rl.on('line', (input) => {
+    if (input === 'exit') {
+        rl.close()
     }
 });
+rl.on('SIGINT', () => rl.close());
+process.on('beforeExit', () => {
+    fs.appendFile(
+        path.join(__dirname, 'mynotes.txt'),
+        'Bye bye!',
+        err => {
+            if (err) throw err;
+            process.exit()
+        }
+    );
+});
+process.on('exit', () => {
+    stdout.write('Bye bye!\n');
+});
+
+

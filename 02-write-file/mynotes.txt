@@ -1,3 +1,2 @@
 Hello Student1, type here something...
-hi
-exit
+hiexitBye bye!
